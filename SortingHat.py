@@ -1,11 +1,12 @@
 import tkinter as tk  # import Tkinter for GUI and ttk for nicer button layout
 from tkinter import *
 from tkinter import ttk
-import  sys
 import os
+import sys
 
 LARGE_FONT = ("Verdana", 16) # constant of our large font, constant size and font family
 HEADER_FONT = ("Courier New", 24)
+HISTORY_FONT = ("Helvetica", 18)
 
 # -------------------------------------------Main Class-----------------------------------------------------------------
 
@@ -18,8 +19,6 @@ class HPQ(tk.Tk):  # Create class that inherits tk which allows for use of metho
     def __init__(self, *args, **kwargs):  # Create method __init__ that run when you call the class, self is a parameter, args allows passing of any variables, kwargs are keyword arguments
         tk.Tk.__init__(self, *args, **kwargs)  # Initialize Tkinter, args and kwargs - can pass different variables
 
-        tk.Tk.wm_title(self,"Harry Potter Sorting Hat")  # changes title at top of window
-
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
@@ -30,9 +29,9 @@ class HPQ(tk.Tk):  # Create class that inherits tk which allows for use of metho
 
         for F in (MainMenu, History, Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8, Q9, Q10, Q11, Q12, EndPage):  # for loop to bring frames to top
             frame = F(container, self)
+            frame.config(background='#d4d4d4')
 
             self.frames[F] = frame
-
             frame.grid(row=0, column=0, sticky="nsew")
 
         self.show_frame(MainMenu) #This starts up the MainMenu
@@ -73,17 +72,32 @@ class HPQ(tk.Tk):  # Create class that inherits tk which allows for use of metho
         frame = self.frames[cont]
         frame.tkraise()
 
+    def restart_program(self):
+        os.execl(sys.executable, sys.executable, *sys.argv)
+
 # ----------------------------------------------Main Menu---------------------------------------------------------------
 
 class MainMenu(tk.Frame): # inherit from frame
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        label = tk.Label(self, text="Harry Potter Sorting Hat Quiz", font=HEADER_FONT) # taken class tk.Label and created object "label"
-        label.pack(pady=20, padx=5) # leaves padding on outside edges to window
+        self.title_photo = PhotoImage(file="pottertitle.gif")
+        self.Artwork = Label(self, image=self.title_photo)
+        self.Artwork.title_photo = self.title_photo
+        self.Artwork.pack()
 
-        ttk.Style().configure("MM.TButton", width=15)
-        ttk.Style().configure("LG.TButton", width=20)
+        label1 = tk.Label(self, text="Welcome to the Sorting Hat", font=HEADER_FONT)
+        label2 = tk.Label(self, text="What house will you belong to?", font=HEADER_FONT)# taken class tk.Label and created object "label"
+        label1.config(background='#d4d4d4')
+        label2.config(background='#d4d4d4')
+        label1.pack(pady=15, padx=5) # leaves padding on outside edges to window
+        label2.pack(pady=15, padx=5) # leaves padding on outside edges to window
 
+
+        style = ttk.Style()
+        style.theme_use('clam')
+        style.configure("MM.TButton", width=15, background='#d4d4d4')
+        style.configure("LG.TButton", width=20, background='#d4d4d4', foreground='black')
+        style.configure("EX.TButton", width=15, background='#d4d4d4', foreground='black')
 
         startButton = ttk.Button(self, text="Start Quiz", style="MM.TButton", command= lambda: controller.show_frame(Q1)) # start button sending to questions 1
         startButton.pack()                                                                            #Lambda only way I could get correct command
@@ -91,13 +105,9 @@ class MainMenu(tk.Frame): # inherit from frame
         histButton = ttk.Button(self, text='History', style="MM.TButton", command=lambda: controller.show_frame(History)) # history button that shows sorting hat history
         histButton.pack()
 
-        exitButton = ttk.Button(self, text="Exit", command=controller.quit) # exit button ends code
+        exitButton = ttk.Button(self, text="Exit", style="EX.TButton", command=controller.quit) # exit button ends code
         exitButton.pack(pady=25)
 
-        self.title_photo = PhotoImage(file="pottertitle.gif")
-        self.Artwork = Label(self, image=self.title_photo)
-        self.Artwork.title_photo = self.title_photo
-        self.Artwork.pack()
 
 
 class History(tk.Frame):
@@ -112,7 +122,8 @@ class History(tk.Frame):
                                          'they would continue to sort the students when the four were dead, Gryffindor pulled his hat from his head and, along\n '
                                          'with the other founders, enchanted it with their combined intelligence. All four founders wanted to ensure that students\n'
                                          'would be sorted into their eponymous houses, which would be selected according to each founders particular preferences\n '
-                                         'in students.', font=LARGE_FONT)
+                                         'in students.', font=HISTORY_FONT)
+        label.config(background='#d4d4d4')
         label.pack(pady=10, padx=5)
 
         homeButton = ttk.Button(self, text="Back to Home", style="MM.TButton", command=lambda: controller.show_frameEND(MainMenu))
@@ -127,7 +138,8 @@ class Q1(tk.Frame):
         label = tk.Label(self, text='You will now take a seat in front of all the other wizards at Hogwarts School of Witchcraft and Wizardry and answer 12 simple questions about\n'
                                     'yourself to find out where you will be placed. Good Luck Young Wizard!\n'
                                     'Choose your favorite color: ', font=LARGE_FONT)
-        label.pack(pady=10, padx=5)
+        label.config(background='#d4d4d4')
+        label.pack(pady=50, padx=5)
 
         button1 = ttk.Button(self, text='Red', style="LG.TButton", command=lambda: controller.show_frameG(Q2)) # lambda is a throwaway function but can't get to work without
         button1.pack()                                                                     # if the user clicks on red then it goes to the gryffindor frame and adds 1
@@ -150,7 +162,8 @@ class Q2(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text='Which Spiritual animal most relates to you? ', font=LARGE_FONT)
-        label.pack(pady=10, padx=5)
+        label.config(background='#d4d4d4')
+        label.pack(pady=50, padx=5)
 
         button1 = ttk.Button(self, text='Snake', style="LG.TButton", command= lambda: controller.show_frameS(Q3))
         button1.pack()
@@ -171,7 +184,8 @@ class Q3(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text='What characteristic best describes you? ', font=LARGE_FONT)
-        label.pack(pady=10, padx=5)
+        label.config(background='#d4d4d4')
+        label.pack(pady=50, padx=5)
 
         button1 = ttk.Button(self, text='Cunning', style="LG.TButton", command= lambda: controller.show_frameS(Q4))
         button1.pack()
@@ -192,7 +206,8 @@ class Q4(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text='Which of these 4 states of matter do you find most interesting? ', font=LARGE_FONT)
-        label.pack(pady=10, padx=5)
+        label.config(background='#d4d4d4')
+        label.pack(pady=50, padx=5)
 
         button1 = ttk.Button(self, text='Gas', style="LG.TButton", command= lambda: controller.show_frameR(Q5))
         button1.pack()
@@ -213,7 +228,8 @@ class Q5(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text='Of the classic elements which appeals to you the most? ', font=LARGE_FONT)
-        label.pack(pady=10, padx=5)
+        label.config(background='#d4d4d4')
+        label.pack(pady=50, padx=5)
 
         button1 = ttk.Button(self, text='Fire', style="LG.TButton", command= lambda: controller.show_frameG(Q6))
         button1.pack()
@@ -234,7 +250,8 @@ class Q6(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text='Out of these, what would your patronus be? ', font=LARGE_FONT)
-        label.pack(pady=10, padx=5)
+        label.config(background='#d4d4d4')
+        label.pack(pady=50, padx=5)
 
         button1 = ttk.Button(self, text='Phoenix', style="LG.TButton", command= lambda: controller.show_frameG(Q7))
         button1.pack()
@@ -255,7 +272,8 @@ class Q7(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text='Where would you most likely be found daily in a castle? ', font=LARGE_FONT)
-        label.pack(pady=10, padx=5)
+        label.config(background='#d4d4d4')
+        label.pack(pady=50, padx=5)
 
         button1 = ttk.Button(self, text='The Forbidden Forest', style="LG.TButton", command= lambda: controller.show_frameS(Q8))
         button1.pack()
@@ -276,7 +294,8 @@ class Q8(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text='What is your favorite Diagon Alley store? ', font=LARGE_FONT)
-        label.pack(pady=10, padx=5)
+        label.config(background='#d4d4d4')
+        label.pack(pady=50, padx=5)
 
         button1 = ttk.Button(self, text='The Leaky Cauldon', style="LG.TButton", command= lambda: controller.show_frameH(Q9))
         button1.pack()
@@ -297,7 +316,8 @@ class Q9(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text='What is your choice of Transportation? ', font=LARGE_FONT)
-        label.pack(pady=10, padx=5)
+        label.config(background='#d4d4d4')
+        label.pack(pady=50, padx=5)
 
         button1 = ttk.Button(self, text='Broomstick', style="LG.TButton", command= lambda: controller.show_frameG(Q10))
         button1.pack()
@@ -318,7 +338,8 @@ class Q10(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text='How do you deal with difficult situations? ', font=LARGE_FONT)
-        label.pack(pady=10, padx=5)
+        label.config(background='#d4d4d4')
+        label.pack(pady=50, padx=5)
 
         button1 = ttk.Button(self, text='Face it without hesitation', style="LG.TButton", command= lambda: controller.show_frameG(Q11))
         button1.pack()
@@ -339,7 +360,8 @@ class Q11(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text='Who is your favorite house ghost? ', font=LARGE_FONT)
-        label.pack(pady=10, padx=5)
+        label.config(background='#d4d4d4')
+        label.pack(pady=50, padx=5)
 
         button1 = ttk.Button(self, text='Nearly headless Nick', style="LG.TButton", command= lambda: controller.show_frameG(Q12))
         button1.pack()
@@ -360,7 +382,8 @@ class Q12(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text='Which famous witch or wizard relates to you most? ', font=LARGE_FONT)
-        label.pack(pady=10, padx=5)
+        label.config(background='#d4d4d4')
+        label.pack(pady=50, padx=5)
 
         button1 = ttk.Button(self, text='Minerva McGonagall', style="LG.TButton", command= lambda: controller.show_frameG(EndPage))
         button1.pack()
@@ -381,18 +404,20 @@ class EndPage(tk.Frame): #Results Page
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text='Hmmmmmm....I think you would do best in......', font=LARGE_FONT)
-        label.pack(pady=10, padx=5)
+        label.config(background='#d4d4d4')
+        label.pack(pady=50, padx=5)
 
-        houseLabel= tk.Label(self, text="", font=LARGE_FONT) #Spacing for suspenseful effect
+        houseLabel= tk.Label(self, text="", font=LARGE_FONT)
+        houseLabel.config(background='#d4d4d4')        #Spacing for suspenseful effect
         houseLabel.pack()
 
         resultsButton = ttk.Button(self, text="Results", style="MM.TButton", command=self.countWinner)
         resultsButton.pack()
 
-        homeButton = ttk.Button(self, text="Back to Home", style="MM.TButton", command=lambda: controller.show_frameEND(MainMenu))
+        homeButton = ttk.Button(self, text="Back to Home", style="MM.TButton", command=lambda: controller.restart_program())
         homeButton.pack()
 
-        exitButton = ttk.Button(self, text="Exit", command=controller.quit)
+        exitButton = ttk.Button(self, text="Exit", style="EX.TButton", command=controller.quit)
         exitButton.pack(pady=10)
 
     def countWinner(self):
@@ -407,6 +432,7 @@ class EndPage(tk.Frame): #Results Page
                                     'Where dwell the brave at heart,\n'
                                     'Their daring, nerve, and chivalry\n'
                                     'Set Gryffindors apart', font=HEADER_FONT, fg = 'red')
+            winner.config(background='#d4d4d4')
             winner.pack(pady=0, padx=0)
 
         # if the ravenclaw counter is greater than all of the others, it prints ravenclaw
@@ -420,6 +446,7 @@ class EndPage(tk.Frame): #Results Page
                                    'If you have ve a ready mind,\n'
                                    'Where those of wit and learning,\n'
                                    'Will always find their kind', font=HEADER_FONT, fg = 'purple')
+            winner.config(background='#d4d4d4')
             winner.pack(pady=0, padx=0)
 
         # if the hufflepuff counter is greater than all of the others, it prints hufflepuff
@@ -433,8 +460,8 @@ class EndPage(tk.Frame): #Results Page
                                    'Where they are just and loyal,\n'
                                    'Those patient Hufflepuffs are true,\n'
                                    'And unafraid of toil', font=HEADER_FONT, fg = '#255255000')
+            winner.config(background='#d4d4d4')
             winner.pack(pady=0, padx=0)
-            winner.pack()
 
         # if the slytherin counter is greater than all of the others, it prints slytherin
         elif HPQ.slytherinCounter > HPQ.gryffindorCounter and HPQ.slytherinCounter > HPQ.hufflepuffCounter and HPQ.slytherinCounter > HPQ.ravenclawCounter:
@@ -447,6 +474,7 @@ class EndPage(tk.Frame): #Results Page
                                    'You will make your real friends,\n'
                                    'Those cunning folk use any means,\n'
                                    'To achieve their ends', font=HEADER_FONT, fg = 'green')
+            winner.config(background='#d4d4d4')
             winner.pack(pady=0, padx=0)
 
         elif HPQ.gryffindorCounter == HPQ.slytherinCounter or HPQ.gryffindorCounter == HPQ.hufflepuffCounter or HPQ.gryffindorCounter == HPQ.ravenclawCounter:
@@ -457,7 +485,7 @@ class EndPage(tk.Frame): #Results Page
             winner = tk.Label(self, text='Sorry but you must have been lying\n' 
                                     'when answering because you are too\n'
                                     'similar between different houses. TRY AGAIN!', font = HEADER_FONT)
-
+            winner.config(background='#d4d4d4')
             winner.pack(pady=0, padx=0)
 
         elif HPQ.slytherinCounter == HPQ.hufflepuffCounter or HPQ.slytherinCounter == HPQ.ravenclawCounter:
@@ -468,7 +496,7 @@ class EndPage(tk.Frame): #Results Page
             winner = tk.Label(self, text='Sorry but you must have been lying\n'
                                    'when answering because you are too\n'
                                    'similar between different houses. TRY AGAIN!', font=HEADER_FONT)
-
+            winner.config(background='#d4d4d4')
             winner.pack(pady=0, padx=0)
 
         elif HPQ.hufflepuffCounter == HPQ.ravenclawCounter:
@@ -479,7 +507,7 @@ class EndPage(tk.Frame): #Results Page
             winner = tk.Label(self, text='You are too similar between houses.\n'
                                    'The sorting hat could not decide where to place you\n'
                                    'TRY AGAIN!', font=HEADER_FONT)
-
+            winner.config(background='#d4d4d4')
             winner.pack(pady=0, padx=0)
 
 app = HPQ() # assigning the class to app
